@@ -51,6 +51,19 @@ export default function Home() {
             </div>
           </div>
         </Link>
+        <Link href="/panduan">
+          <div
+            className={`bg-green-600 rounded-lg shadow-md p-4 cursor-pointer transition-transform duration-300 mb-4 ${
+              hoveredCard === 'panduan' ? 'transform translate-x-2' : ''
+            }`}
+            onMouseEnter={() => setHoveredCard('panduan')}
+            onMouseLeave={() => setHoveredCard(null)}
+          >
+            <div className="flex items-center justify-center">
+              <div className="text-center text-white text-xl font-semibold">Panduan</div>
+            </div>
+          </div>
+        </Link>
         <Link href="/settings">
           <div
             className={`bg-gray-600 rounded-lg shadow-md p-4 cursor-pointer transition-transform duration-300 mb-8 ${
