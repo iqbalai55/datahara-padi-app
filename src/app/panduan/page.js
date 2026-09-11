@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { GiWheat } from 'react-icons/gi';
 
 const guides = [
-  { link: 'padi', name: 'Panduan Padi', description: 'Indeks Spektral & Analisis Stres' },
-  { link: 'cara-sampling', name: 'Cara Sampling & Interpretasi Level', description: 'Tata Cara Pengambilan Sample & Penjelasan Level' }
+  { link: 'cara-sampling', name: 'Cara Sampling & Interpretasi Level', description: 'Tata Cara Pengambilan Sample & Penjelasan Level' },
+  { link: 'padi', name: 'Panduan Analisis Spektral', description: 'Indeks Spektral, Skor Stres & Skor Kesuburan' }
 ];
 
 export default function Home_Panduan() {
