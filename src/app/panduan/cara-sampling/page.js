@@ -240,6 +240,14 @@ export default function PanduanCaraSampling() {
         <li>Semua indeks dihitung dari <strong>reflectance relatif</strong>, bukan ADC/count sensor mentah.</li>
         <li>Lakukan sampling secara berkala (1–2 minggu sekali) untuk memantau tren perubahan kondisi tanaman dari waktu ke waktu.</li>
       </ul>
+
+      {/* Referensi */}
+      <h2 className="text-2xl font-bold text-green-700 mt-8 mb-4">Referensi</h2>
+      <ul className="list-disc ml-6 mb-6 text-sm text-gray-700 space-y-2">
+        <li>Peraturan Menteri Pertanian No. 40/Permentan/OT.140/4/2007 tentang Rekomendasi Pemupukan N, P, dan K pada Padi Sawah Spesifik Lokasi.</li>
+        <li>International Rice Research Institute (IRRI), <em>Leaf Color Chart (LCC) for Monitoring Nitrogen Status in Rice</em>.</li>
+        <li>Wahid, A.S. (2003). Peningkatan Efisiensi Pupuk Nitrogen pada Padi Sawah dengan Metode Bagan Warna Daun. Jurnal Balai Penelitian Pertanian.</li>
+      </ul>
     </div>
   );
 }
