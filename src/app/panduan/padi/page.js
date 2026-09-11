@@ -184,14 +184,13 @@ export default function PanduanPadi() {
 
       <StreakTable
         title="Level Skor Kesuburan dan Rekomendasi Pupuk N"
-        headers={['Level', 'Warna Daun', 'Status N', 'Dosis Pupuk', 'Rekomendasi']}
+        headers={['Level', 'Warna Daun', 'Status N', 'Rekomendasi Pemupukan']}
         data={bwdScoring}
         renderRow={(row, i) => (
           <>
             <td className="p-3 border-b border-gray-200 font-bold">{row.score}</td>
             <td className="p-3 border-b border-gray-200">{row.color}</td>
             <td className="p-3 border-b border-gray-200">{row.condition}</td>
-            <td className="p-3 border-b border-gray-200">{row.rekomendasi}</td>
             <td className="p-3 border-b border-gray-200 font-medium">{row.rekomendasi}</td>
           </>
         )}

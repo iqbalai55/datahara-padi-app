@@ -348,22 +348,13 @@ export default function Lokasi() {
           const bwdLevel = getBwdLevel(bwdScore);
 
           const issues = [];
-          
-          // Butuh pupuk?
-          if (bwdLevel.level <= 3) {
-            issues.push({ text: bwdLevel.rekomendasi, color: bwdLevel.level <= 2 ? 'text-red-600' : 'text-orange-600', icon: '!' });
-          } else if (bwdLevel.level >= 5) {
-            issues.push({ text: bwdLevel.rekomendasi, color: 'text-blue-600', icon: '!' });
-          }
 
-          // Butuh air?
+          const rekomendasiColor = bwdLevel.level <= 2 ? 'text-red-600' : bwdLevel.level <= 3 ? 'text-orange-600' : bwdLevel.level <= 4 ? 'text-green-600' : 'text-blue-600';
+          const rekomendasiIcon = bwdLevel.level <= 3 || bwdLevel.level >= 5 ? '!' : '✓';
+          issues.push({ text: bwdLevel.rekomendasi, color: rekomendasiColor, icon: rekomendasiIcon });
+
           if (stress.waterStress > 0.3) {
             issues.push({ text: L.interpItems.water, color: 'text-orange-600', icon: '!' });
-          }
-
-          // Sehat
-          if (issues.length === 0) {
-            issues.push({ text: L.interpItems.healthy, color: 'text-green-600', icon: '✓' });
           }
 
           const statusColor = condition.color.includes('green') ? '#16a34a' : condition.color.includes('yellow') ? '#eab308' : condition.color.includes('orange') ? '#ea580c' : '#dc2626';
@@ -382,7 +373,7 @@ export default function Lokasi() {
                   <div className="font-medium">{bwdLevel.nitrogenStatus}</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-gray-500">Dosis Pupuk</div>
+                  <div className="text-gray-500">Rekomendasi Pemupukan</div>
                   <div className="font-medium">{bwdLevel.dosis}</div>
                 </div>
               </div>
