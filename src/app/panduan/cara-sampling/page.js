@@ -35,46 +35,36 @@ export default function PanduanCaraSampling() {
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">1</span>
           <div>
-            <p className="font-semibold">Pilih 10 rumpun tanaman padi sehat secara acak</p>
-            <p className="text-gray-600">Dari areal yang akan diukur, pilih 10 rumpun yang sehat dan merepresentasikan kondisi umum tanaman di sawah Anda.</p>
+            <p className="font-semibold">Hidupkan perangkat sensor</p>
+            <p className="text-gray-600">Nyalakan sensor dan tunggu hingga siap digunakan. Pastikan baterai cukup.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">2</span>
           <div>
-            <p className="font-semibold">Ukur daun teratas yang sudah terbuka penuh</p>
-            <p className="text-gray-600">Pada setiap rumpun, arahkan sensor ke daun teratas yang sudah terbuka penuh. Posisikan sensor sekitar 5–10 cm dari permukaan daun, tegak lurus (90°).</p>
+            <p className="font-semibold">Arahkan sensor ke daun tanaman</p>
+            <p className="text-gray-600">Dekatkan sensor sekitar 5–10 cm dari permukaan daun teratas yang sudah terbuka penuh. Pastikan sensor tegak lurus (90°) terhadap daun.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">3</span>
           <div>
-            <p className="font-semibold">Jangan menghadap cahaya matahari</p>
-            <p className="text-gray-600">Saat mengukur, jangan menghadap langsung ke cahaya matahari. Pantulan cahaya dapat mempengaruhi hasil pengukuran.</p>
+            <p className="font-semibold">Tekan tombol sampling</p>
+            <p className="text-gray-600">Sensor akan membaca 18 channel spektral dan data otomatis tersimpan di aplikasi. Ulangi untuk beberapa titik daun berbeda pada rumpun yang sama.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">4</span>
           <div>
-            <p className="font-semibold">Catat hasil pengukuran</p>
-            <p className="text-gray-600">Data dari setiap pengukuran akan otomatis tersimpan di aplikasi. Jika warna daun berada di antara dua skala, ambil nilai rata-rata (misal 4,5 jika di antara skala 4 dan 5).</p>
+            <p className="font-semibold">Ulangi pada rumpun lain</p>
+            <p className="text-gray-600">Lakukan pengukuran yang sama pada rumpun lain di areal yang sama. Aplikasi akan otomatis menghitung rata-rata dan menentukan kondisi tanaman.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">5</span>
           <div>
-            <p className="font-semibold">Hitung rata-rata dan tentukan tindakan</p>
-            <p className="text-gray-600">
-              Rata-rata dari 10 rumpun menentukan kondisi tanaman. Jika rata-rata <strong>kurang dari 4</strong> → tanaman perlu pupuk N sesuai fase dan umur. 
-              Jika rata-rata <strong>lebih dari 4</strong> → tanaman tidak perlu pupuk N tambahan.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">6</span>
-          <div>
             <p className="font-semibold">Cek hasil di aplikasi</p>
-            <p className="text-gray-600">Buka halaman kebun atau sampling untuk melihat analisis lengkap: kondisi tanaman, skor stres, skor kesuburan, dan rekomendasi pemupukan.</p>
+            <p className="text-gray-600">Buka halaman kebun atau sampling untuk melihat hasil analisis otomatis: kondisi tanaman, skor stres, skor kesuburan, dan rekomendasi pemupukan.</p>
           </div>
         </div>
       </div>
