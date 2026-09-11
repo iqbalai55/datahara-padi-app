@@ -42,8 +42,8 @@ export default function PanduanCaraSampling() {
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">2</span>
           <div>
-            <p className="font-semibold">Arahkan sensor ke daun tanaman</p>
-            <p className="text-gray-600">Dekatkan sensor sekitar 5–10 cm dari permukaan daun teratas yang sudah terbuka penuh. Pastikan sensor tegak lurus (90°) terhadap daun.</p>
+            <p className="font-semibold">Jepit daun ke sensor</p>
+            <p className="text-gray-600">Jepit daun teratas yang sudah terbuka penuh ke sensor. Pastikan daun menutupi area pembacaan sensor dengan baik.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
