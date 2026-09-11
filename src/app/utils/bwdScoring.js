@@ -10,7 +10,7 @@ const BWD_LEVELS = [
     leafColor: 'Kuning Pucat',
     nitrogenStatus: 'Sangat Kekurangan N',
     rekomendasi: 'Pemupukan N segera diperlukan',
-    dosis: 'Tinggi'
+    dosis: 'Pupuk N dosis tinggi segera'
   },
   {
     level: 2,
@@ -23,7 +23,7 @@ const BWD_LEVELS = [
     leafColor: 'Kuning Hijau',
     nitrogenStatus: 'Kekurangan N',
     rekomendasi: 'Perlu pemupukan N',
-    dosis: 'Sedang-Tinggi'
+    dosis: 'Pupuk N dosis sedang–tinggi'
   },
   {
     level: 3,
@@ -36,7 +36,7 @@ const BWD_LEVELS = [
     leafColor: 'Hijau Muda',
     nitrogenStatus: 'Cenderung Kekurangan N',
     rekomendasi: 'Pertimbangkan pemupukan N',
-    dosis: 'Sedang'
+    dosis: 'Pupuk N dosis sedang'
   },
   {
     level: 4,
@@ -48,8 +48,8 @@ const BWD_LEVELS = [
     barColor: 'bg-green-500',
     leafColor: 'Hijau',
     nitrogenStatus: 'N Cukup',
-    rekomendasi: 'Pertahankan, tidak perlu menambah N segera',
-    dosis: 'Rendah'
+    rekomendasi: 'Pertahankan, tidak perlu menambah N',
+    dosis: 'Pemupukan N tidak diperlukan sementara'
   },
   {
     level: 5,
@@ -62,7 +62,7 @@ const BWD_LEVELS = [
     leafColor: 'Hijau Tua',
     nitrogenStatus: 'N Berlebih',
     rekomendasi: 'Jangan menambah N',
-    dosis: 'Tidak Perlu'
+    dosis: 'Hentikan pemberian pupuk N'
   },
   {
     level: 6,
@@ -75,7 +75,7 @@ const BWD_LEVELS = [
     leafColor: 'Hijau Sangat Tua',
     nitrogenStatus: 'N Sangat Berlebih',
     rekomendasi: 'Hindari tambahan N',
-    dosis: 'Hindari'
+    dosis: 'Hindari pupuk N, risiko toksisitas'
   }
 ];
 

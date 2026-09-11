@@ -65,12 +65,12 @@ const stressScoring = [
 ];
 
 const bwdScoring = [
-  { score: '1', condition: 'Sangat Kekurangan N', color: 'Kuning Pucat', description: 'Pemupukan N segera', rekomendasi: 'Dosis Tinggi' },
-  { score: '2', condition: 'Kekurangan N', color: 'Kuning Hijau', description: 'Perlu pemupukan N', rekomendasi: 'Dosis Sedang-Tinggi' },
-  { score: '3', condition: 'Cenderung Kekurangan N', color: 'Hijau Muda', description: 'Pertimbangkan pemupukan N', rekomendasi: 'Dosis Sedang' },
-  { score: '4', condition: 'N Cukup', color: 'Hijau', description: 'Pertahankan', rekomendasi: 'Dosis Rendah' },
-  { score: '5', condition: 'N Berlebih', color: 'Hijau Tua', description: 'Jangan tambah N', rekomendasi: 'Tidak Perlu' },
-  { score: '6', condition: 'N Sangat Berlebih', color: 'Hijau Sangat Tua', description: 'Hindari tambahan N', rekomendasi: 'Hindari' },
+  { score: '1', condition: 'Sangat Kekurangan N', color: 'Kuning Pucat', description: 'Pemupukan N segera', rekomendasi: 'Pupuk N dosis tinggi segera' },
+  { score: '2', condition: 'Kekurangan N', color: 'Kuning Hijau', description: 'Perlu pemupukan N', rekomendasi: 'Pupuk N dosis sedang–tinggi' },
+  { score: '3', condition: 'Cenderung Kekurangan N', color: 'Hijau Muda', description: 'Pertimbangkan pemupukan N', rekomendasi: 'Pupuk N dosis sedang' },
+  { score: '4', condition: 'N Cukup', color: 'Hijau', description: 'Pertahankan', rekomendasi: 'Pemupukan N tidak diperlukan sementara' },
+  { score: '5', condition: 'N Berlebih', color: 'Hijau Tua', description: 'Jangan tambah N', rekomendasi: 'Hentikan pemberian pupuk N' },
+  { score: '6', condition: 'N Sangat Berlebih', color: 'Hijau Sangat Tua', description: 'Hindari tambahan N', rekomendasi: 'Hindari pupuk N, risiko toksisitas' },
 ];
 
 const StreakTable = ({ title, headers, data, renderRow }) => (
