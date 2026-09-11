@@ -150,10 +150,10 @@ export default function PanduanPadi() {
 
       <h2 className="text-2xl font-bold text-green-700 mt-8 mb-4">Stress Score</h2>
       <p className="mb-4 text-base text-gray-700">
-        Skor stres dihitung dari kombinasi berat setiap indeks:
+        Skor stres dihitung dari kombinasi berat setiap indeks. Bobot dapat diatur di halaman <strong>Pengaturan</strong>.
       </p>
       <div className="bg-white p-4 rounded-lg shadow mb-4 text-sm font-mono text-gray-700">
-        Stress Score = 0.35 × NDVI_stress + 0.40 × NDRE_stress + 0.25 × GNDVI_stress
+        Stress Score = w<sub>NDVI</sub> × NDVI_stress + w<sub>NDRE</sub> × NDRE_stress + w<sub>GNDVI</sub> × GNDVI_stress
       </div>
 
       <StreakTable
@@ -176,10 +176,10 @@ export default function PanduanPadi() {
         Skor ini membantu menentukan kapan tanaman perlu diberi pupuk N dan berapa takarannya.
       </p>
       <p className="mb-4 text-base text-gray-700">
-        Dalam aplikasi ini, skor kesuburan diestimasi dari indeks spektral:
+        Dalam aplikasi ini, skor kesuburan diestimasi dari indeks spektral. Bobot dapat diatur di halaman <strong>Pengaturan</strong>.
       </p>
       <div className="bg-white p-4 rounded-lg shadow mb-4 text-sm font-mono text-gray-700">
-        Skor Kesuburan = (0.4 × NDVI + 0.35 × NDRE + 0.25 × GNDVI) × 5
+        Skor Kesuburan = (w<sub>NDVI</sub> × NDVI + w<sub>NDRE</sub> × NDRE + w<sub>GNDVI</sub> × GNDVI) × 5
       </div>
 
       <StreakTable

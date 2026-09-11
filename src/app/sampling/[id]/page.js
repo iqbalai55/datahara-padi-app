@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { doc, onSnapshot, deleteField, updateDoc } from 'firebase/firestore';
 import { db } from '@/app/utils/firebase';
-import { getBaseline, getPlants } from '@/app/utils/baseline';
+import { getBaseline, getPlants, getWeights } from '@/app/utils/baseline';
 import { computeBwdScore, getBwdLevel, BWD_LEVELS } from '@/app/utils/bwdScoring';
+import { computeIndexStress, getStressBarColor } from '@/app/utils/stressScoring';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { Download, Trash2 } from 'lucide-react';
 
@@ -35,17 +36,12 @@ function computeSpectralIndices(channels) {
 }
 
 function computeStress(indices, baseline) {
-  const ndviStress = indices.ndvi < baseline.ndvi.mean - 2 * baseline.ndvi.sd
-    ? Math.min(1, Math.abs(indices.ndvi - (baseline.ndvi.mean - 2 * baseline.ndvi.sd)) / (baseline.ndvi.mean - (baseline.ndvi.mean - 2 * baseline.ndvi.sd)))
-    : 0;
-  const ndreStress = indices.ndre < baseline.ndre.mean - 2 * baseline.ndre.sd
-    ? Math.min(1, Math.abs(indices.ndre - (baseline.ndre.mean - 2 * baseline.ndre.sd)) / (baseline.ndre.mean - (baseline.ndre.mean - 2 * baseline.ndre.sd)))
-    : 0;
-  const gndviStress = indices.gndvi < baseline.gndvi.mean - 2 * baseline.gndvi.sd
-    ? Math.min(1, Math.abs(indices.gndvi - (baseline.gndvi.mean - 2 * baseline.gndvi.sd)) / (baseline.gndvi.mean - (baseline.gndvi.mean - 2 * baseline.gndvi.sd)))
-    : 0;
+  const weights = getWeights().stress;
+  const ndviStress = computeIndexStress(indices.ndvi, baseline.ndvi, 'below');
+  const ndreStress = computeIndexStress(indices.ndre, baseline.ndre, 'below');
+  const gndviStress = computeIndexStress(indices.gndvi, baseline.gndvi, 'below');
 
-  const score = 0.35 * ndviStress + 0.40 * ndreStress + 0.25 * gndviStress;
+  const score = weights.ndvi * ndviStress + weights.ndre * ndreStress + weights.gndvi * gndviStress;
 
   let condition = 'Sehat';
   let conditionColor = 'text-green-600';
@@ -59,11 +55,8 @@ function computeStress(indices, baseline) {
   return { ndviStress, ndreStress, gndviStress, score, condition, conditionColor };
 }
 
-function getStressBarColor(value) {
-  if (value < 0.20) return 'bg-green-500';
-  if (value < 0.40) return 'bg-yellow-500';
-  if (value < 0.60) return 'bg-orange-500';
-  return 'bg-red-500';
+function getStressBarColorLocal(value) {
+  return getStressBarColor(value);
 }
 
 export default function Sampling() {

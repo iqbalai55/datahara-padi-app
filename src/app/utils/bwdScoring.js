@@ -89,12 +89,13 @@ function getBwdLevel(value) {
   return BWD_LEVELS[BWD_LEVELS.length - 1];
 }
 
-function computeBwdScore(ndvi, ndre, gndvi) {
+function computeBwdScore(ndvi, ndre, gndvi, weights) {
+  const w = weights || { ndvi: 0.40, ndre: 0.35, gndvi: 0.25 };
   const ndviNorm = Math.max(0, Math.min(1, ndvi));
   const ndreNorm = Math.max(0, Math.min(1, ndre));
   const gndviNorm = Math.max(0, Math.min(1, gndvi));
 
-  const bwdRaw = (0.4 * ndviNorm + 0.35 * ndreNorm + 0.25 * gndviNorm) * 5;
+  const bwdRaw = (w.ndvi * ndviNorm + w.ndre * ndreNorm + w.gndvi * gndviNorm) * 5;
 
   return Math.max(1, Math.min(6, bwdRaw));
 }

@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/app/utils/firebase';
-import { getBaseline, getPlants } from '@/app/utils/baseline';
+import { getBaseline, getPlants, getWeights } from '@/app/utils/baseline';
 import { computeBwdScore, getBwdLevel, BWD_LEVELS } from '@/app/utils/bwdScoring';
+import { computeIndexStress, computeStressScore, getStressBarColor } from '@/app/utils/stressScoring';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import moment from 'moment';
 
@@ -102,32 +103,6 @@ function computeSpectralIndices(channels) {
   return { ndvi, ndre, gndvi, waterIndex };
 }
 
-function computeIndexStress(value, baseline, direction = 'below') {
-  const lowerLimit = baseline.mean - 2 * baseline.sd;
-  const upperLimit = baseline.mean + 2 * baseline.sd;
-
-  if (direction === 'below') {
-    if (value >= lowerLimit) return 0;
-    const range = baseline.mean - lowerLimit;
-    return Math.min(1, Math.abs(value - lowerLimit) / range);
-  } else {
-    if (value <= upperLimit && value >= lowerLimit) return 0;
-    const range = upperLimit - baseline.mean;
-    const dev = value > upperLimit ? value - upperLimit : lowerLimit - value;
-    return Math.min(1, dev / range);
-  }
-}
-
-function computeStressScore(indices, baseline) {
-  const ndviStress = computeIndexStress(indices.ndvi, baseline.ndvi, 'below');
-  const ndreStress = computeIndexStress(indices.ndre, baseline.ndre, 'below');
-  const gndviStress = computeIndexStress(indices.gndvi, baseline.gndvi, 'below');
-  const waterStress = computeIndexStress(indices.waterIndex, baseline.waterIndex, 'both');
-
-  const score = 0.35 * ndviStress + 0.40 * ndreStress + 0.25 * gndviStress;
-  return { ndviStress, ndreStress, gndviStress, waterStress, score };
-}
-
 function determineCondition(stress, labels) {
   const { score, ndviStress, ndreStress, gndviStress } = stress;
   const c = labels.conditions;
@@ -157,13 +132,6 @@ function getColorClass(value) {
   if (value < 0.40) return 'text-yellow-600';
   if (value < 0.60) return 'text-orange-600';
   return 'text-red-600';
-}
-
-function getStressBarColor(value) {
-  if (value < 0.20) return 'bg-green-500';
-  if (value < 0.40) return 'bg-yellow-500';
-  if (value < 0.60) return 'bg-orange-500';
-  return 'bg-red-500';
 }
 
 function determineGrowthStage(hst, labels) {
@@ -326,7 +294,7 @@ export default function Lokasi() {
   samplingData.forEach((sample) => {
     const idx = computeSpectralIndices(sample);
     const s = computeStressScore(idx, baseline);
-    const bwd = computeBwdScore(idx.ndvi, idx.ndre, idx.gndvi);
+    const bwd = computeBwdScore(idx.ndvi, idx.ndre, idx.gndvi, getWeights().bwd);
     historyForCharts[sample.time] = { ndvi: idx.ndvi, ndre: idx.ndre, gndvi: idx.gndvi, waterIndex: idx.waterIndex, stressScore: s.score, bwdScore: bwd };
   });
 
@@ -344,7 +312,7 @@ export default function Lokasi() {
 
         {/* Analisis Kondisi */}
         {(() => {
-          const bwdScore = computeBwdScore(indices.ndvi, indices.ndre, indices.gndvi);
+          const bwdScore = computeBwdScore(indices.ndvi, indices.ndre, indices.gndvi, getWeights().bwd);
           const bwdLevel = getBwdLevel(bwdScore);
 
           const issues = [];

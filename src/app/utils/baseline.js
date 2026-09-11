@@ -79,3 +79,38 @@ export function updatePlant(id, name) {
 }
 
 export { DEFAULT_PLANTS };
+
+// Weights
+const WEIGHTS_KEY = 'datahara_weights';
+
+const DEFAULT_WEIGHTS = {
+  stress: { ndvi: 0.35, ndre: 0.40, gndvi: 0.25 },
+  bwd: { ndvi: 0.40, ndre: 0.35, gndvi: 0.25 }
+};
+
+export function getWeights() {
+  if (typeof window === 'undefined') return DEFAULT_WEIGHTS;
+  try {
+    const stored = localStorage.getItem(WEIGHTS_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        stress: { ...DEFAULT_WEIGHTS.stress, ...parsed.stress },
+        bwd: { ...DEFAULT_WEIGHTS.bwd, ...parsed.bwd }
+      };
+    }
+  } catch {}
+  return DEFAULT_WEIGHTS;
+}
+
+export function setWeights(weights) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(WEIGHTS_KEY, JSON.stringify(weights));
+}
+
+export function resetWeights() {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(WEIGHTS_KEY);
+}
+
+export { DEFAULT_WEIGHTS };

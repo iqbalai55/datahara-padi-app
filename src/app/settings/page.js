@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getBaseline, setBaseline, resetBaseline, DEFAULT_BASELINE, getPlants, setPlants, addPlant, removePlant } from '@/app/utils/baseline';
+import { getBaseline, setBaseline, resetBaseline, DEFAULT_BASELINE, getPlants, setPlants, addPlant, removePlant, getWeights, setWeights, resetWeights, DEFAULT_WEIGHTS } from '@/app/utils/baseline';
 import { Plus, Trash2 } from 'lucide-react';
 
 const INDEX_META = [
@@ -15,6 +15,7 @@ const INDEX_META = [
 export default function Settings() {
   const [baseline, setBaselineState] = useState(null);
   const [plants, setPlantsState] = useState([]);
+  const [weights, setWeightsState] = useState(null);
   const [saved, setSaved] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
 
@@ -25,6 +26,7 @@ export default function Settings() {
   useEffect(() => {
     setBaselineState(getBaseline());
     setPlantsState(getPlants());
+    setWeightsState(getWeights());
   }, []);
 
   const handleChange = (indexKey, field, value) => {
@@ -34,16 +36,26 @@ export default function Settings() {
     setSaved(false);
   };
 
+  const handleWeightChange = (type, indexKey, value) => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return;
+    setWeightsState(prev => ({ ...prev, [type]: { ...prev[type], [indexKey]: num } }));
+    setSaved(false);
+  };
+
   const handleSave = () => {
     setBaseline(baseline);
+    setWeights(weights);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
   const handleReset = () => {
     resetBaseline();
+    resetWeights();
     setBaselineState(getBaseline());
     setPlantsState(getPlants());
+    setWeightsState(getWeights());
     setResetConfirm(false);
     setSaved(false);
   };
@@ -67,7 +79,7 @@ export default function Settings() {
     setPlantsState(getPlants());
   };
 
-  if (!baseline) return (
+  if (!baseline || !weights) return (
     <div className="flex justify-center items-center h-screen">
       <div className="w-20 h-20 border-purple-700 border-t-2 animate-spin rounded-full"></div>
     </div>
@@ -168,20 +180,31 @@ export default function Settings() {
           <h2 className="text-lg font-bold text-gray-800 mb-3">Bobot Stress Score</h2>
           <p className="text-xs text-gray-500 mb-3">Total bobot harus = 1.0</p>
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">NDVI (Vigor)</span>
-              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.35</span>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-700 flex-1">NDVI (Vigor)</span>
+              <input type="number" step="0.01" min="0" max="1" value={weights.stress.ndvi}
+                onChange={(e) => handleWeightChange('stress', 'ndvi', e.target.value)}
+                className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-right font-mono focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">NDRE (Klorofil / N)</span>
-              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.40</span>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-700 flex-1">NDRE (Klorofil / N)</span>
+              <input type="number" step="0.01" min="0" max="1" value={weights.stress.ndre}
+                onChange={(e) => handleWeightChange('stress', 'ndre', e.target.value)}
+                className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-right font-mono focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">GNDVI (Kehijauan)</span>
-              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.25</span>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-700 flex-1">GNDVI (Kehijauan)</span>
+              <input type="number" step="0.01" min="0" max="1" value={weights.stress.gndvi}
+                onChange={(e) => handleWeightChange('stress', 'gndvi', e.target.value)}
+                className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-right font-mono focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
             </div>
           </div>
-          <p className="text-xs text-gray-400 mt-3">Bobot saat ini hardcoded. Ubah di kode jika diperlukan.</p>
+          <div className="mt-3 bg-gray-50 rounded-lg p-3 text-xs text-gray-600 flex justify-between">
+            <span>Total:</span>
+            <span className={`font-mono font-bold ${(weights.stress.ndvi + weights.stress.ndre + weights.stress.gndvi).toFixed(2) === '1.00' ? 'text-green-600' : 'text-red-600'}`}>
+              {(weights.stress.ndvi + weights.stress.ndre + weights.stress.gndvi).toFixed(2)}
+            </span>
+          </div>
         </div>
 
         {/* BWD Weights */}
@@ -189,24 +212,35 @@ export default function Settings() {
           <h2 className="text-lg font-bold text-gray-800 mb-3">Bobot Skor Kesuburan</h2>
           <p className="text-xs text-gray-500 mb-3">Bobot untuk menghitung skor kesuburan tanaman</p>
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">NDVI (Vigor)</span>
-              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.40</span>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-700 flex-1">NDVI (Vigor)</span>
+              <input type="number" step="0.01" min="0" max="1" value={weights.bwd.ndvi}
+                onChange={(e) => handleWeightChange('bwd', 'ndvi', e.target.value)}
+                className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-right font-mono focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">NDRE (Klorofil / N)</span>
-              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.35</span>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-700 flex-1">NDRE (Klorofil / N)</span>
+              <input type="number" step="0.01" min="0" max="1" value={weights.bwd.ndre}
+                onChange={(e) => handleWeightChange('bwd', 'ndre', e.target.value)}
+                className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-right font-mono focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">GNDVI (Kehijauan)</span>
-              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.25</span>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-700 flex-1">GNDVI (Kehijauan)</span>
+              <input type="number" step="0.01" min="0" max="1" value={weights.bwd.gndvi}
+                onChange={(e) => handleWeightChange('bwd', 'gndvi', e.target.value)}
+                className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-right font-mono focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none" />
             </div>
           </div>
           <div className="mt-3 bg-cyan-50 rounded-lg p-3 text-xs text-gray-600">
             <p className="font-medium mb-1">Formula:</p>
-            <code className="font-mono">Skor Kesuburan = (0.4 × NDVI + 0.35 × NDRE + 0.25 × GNDVI) × 5</code>
+            <code className="font-mono">Skor Kesuburan = ({weights.bwd.ndvi} × NDVI + {weights.bwd.ndre} × NDRE + {weights.bwd.gndvi} × GNDVI) × 5</code>
           </div>
-          <p className="text-xs text-gray-400 mt-3">Bobot saat ini hardcoded. Ubah di kode jika diperlukan.</p>
+          <div className="mt-2 bg-gray-50 rounded-lg p-3 text-xs text-gray-600 flex justify-between">
+            <span>Total:</span>
+            <span className={`font-mono font-bold ${(weights.bwd.ndvi + weights.bwd.ndre + weights.bwd.gndvi).toFixed(2) === '1.00' ? 'text-green-600' : 'text-red-600'}`}>
+              {(weights.bwd.ndvi + weights.bwd.ndre + weights.bwd.gndvi).toFixed(2)}
+            </span>
+          </div>
         </div>
 
         {/* Default Reference */}
