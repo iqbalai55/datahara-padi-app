@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/app/utils/firebase';
 import { getBaseline, getPlants } from '@/app/utils/baseline';
+import { computeBwdScore, getBwdLevel, BWD_LEVELS } from '@/app/utils/bwdScoring';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import moment from 'moment';
 
@@ -325,7 +326,8 @@ export default function Lokasi() {
   samplingData.forEach((sample) => {
     const idx = computeSpectralIndices(sample);
     const s = computeStressScore(idx, baseline);
-    historyForCharts[sample.time] = { ndvi: idx.ndvi, ndre: idx.ndre, gndvi: idx.gndvi, waterIndex: idx.waterIndex, stressScore: s.score };
+    const bwd = computeBwdScore(idx.ndvi, idx.ndre, idx.gndvi);
+    historyForCharts[sample.time] = { ndvi: idx.ndvi, ndre: idx.ndre, gndvi: idx.gndvi, waterIndex: idx.waterIndex, stressScore: s.score, bwdScore: bwd };
   });
 
   const hstText = status?.hst
@@ -338,25 +340,66 @@ export default function Lokasi() {
     <div className="min-h-screen bg-white py-4 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <ModeSwitch mode={mode} onToggle={toggleMode} />
-        <h1 className="text-2xl font-bold mb-2 pb-2 border-b border-gray-300">{plantName || L.title}</h1>
-        <p className="text-sm text-gray-500 mb-6">{hstText}</p>
+        <h1 className="text-2xl font-bold mb-6 pb-2 border-b border-gray-300">{plantName || L.title}</h1>
 
-        {/* Kondisi Tanaman */}
-        <div className={`${condition.bg} mb-4 p-4 rounded-2xl`}>
-          <h2 className="text-lg font-semibold inline-block px-3 py-1 rounded-full mb-4">{L.conditionTitle}</h2>
-          <div className="text-center mb-4">
-            <span className={`text-3xl font-bold ${condition.color}`}>{condition.label}</span>
-          </div>
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">{L.stressLabel}:</span>
-              <span className={`font-bold ${getColorClass(stress.score)}`}>{(stress.score * 100).toFixed(1)}%</span>
+        {/* Analisis Kondisi */}
+        {(() => {
+          const bwdScore = computeBwdScore(indices.ndvi, indices.ndre, indices.gndvi);
+          const bwdLevel = getBwdLevel(bwdScore);
+
+          const issues = [];
+          
+          // Butuh pupuk?
+          if (bwdLevel.level <= 3) {
+            issues.push({ text: bwdLevel.rekomendasi, color: bwdLevel.level <= 2 ? 'text-red-600' : 'text-orange-600', icon: '!' });
+          } else if (bwdLevel.level >= 5) {
+            issues.push({ text: bwdLevel.rekomendasi, color: 'text-blue-600', icon: '!' });
+          }
+
+          // Butuh air?
+          if (stress.waterStress > 0.3) {
+            issues.push({ text: L.interpItems.water, color: 'text-orange-600', icon: '!' });
+          }
+
+          // Sehat
+          if (issues.length === 0) {
+            issues.push({ text: L.interpItems.healthy, color: 'text-green-600', icon: '✓' });
+          }
+
+          const statusColor = condition.color.includes('green') ? '#16a34a' : condition.color.includes('yellow') ? '#eab308' : condition.color.includes('orange') ? '#ea580c' : '#dc2626';
+          const levelColor = bwdLevel.color.includes('green') ? '#16a34a' : bwdLevel.color.includes('blue') ? '#2563eb' : bwdLevel.color.includes('orange') ? '#ea580c' : bwdLevel.color.includes('purple') ? '#9333ea' : '#dc2626';
+
+          return (
+            <div className={`${condition.bg} mb-4 p-4 rounded-2xl`}>
+              <div className="text-center mb-4">
+                <div className="text-5xl font-bold mb-1" style={{ color: statusColor }}>{condition.label}</div>
+                <div className="text-2xl font-bold" style={{ color: levelColor }}>Level {bwdLevel.level} — {bwdLevel.condition}</div>
+              </div>
+
+              <div className="bg-white rounded-xl p-3 mb-3 grid grid-cols-2 gap-2 text-xs">
+                <div className="text-center">
+                  <div className="text-gray-500">Status N</div>
+                  <div className="font-medium">{bwdLevel.nitrogenStatus}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-500">Dosis Pupuk</div>
+                  <div className="font-medium">{bwdLevel.dosis}</div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl p-3">
+                <ul className="text-sm space-y-1">
+                  {issues.map((item, i) => (
+                    <li key={i} className={`${item.color} flex items-start gap-2`}>
+                      <span className="font-bold">{item.icon}</span>
+                      <span>{item.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div className={`h-3 rounded-full transition-all duration-500 ${getStressBarColor(stress.score)}`} style={{ width: `${Math.min(100, stress.score * 100)}%` }} />
-            </div>
-          </div>
-        </div>
+          );
+        })()}
 
         {/* Hasil Pemeriksaan */}
         <div className="bg-blue-50 mb-4 p-4 rounded-2xl">
@@ -375,47 +418,6 @@ export default function Lokasi() {
               <InfoBox label={L.water} value={indices.waterIndex.toFixed(3)} status={getStatusText(indices.waterIndex, baseline.waterIndex, L)} color={indices.waterIndex >= baseline.waterIndex.mean - 2 * baseline.waterIndex.sd ? 'text-green-600' : 'text-red-600'} />
             </div>
           </div>
-        </div>
-
-        {/* Detail Kondisi */}
-        <div className="bg-amber-50 mb-4 p-4 rounded-2xl">
-          <h2 className="text-lg font-semibold bg-amber-200 inline-block px-3 py-1 rounded-full mb-4">{L.detailTitle}</h2>
-          <StressBar label={L.ndviBar} value={indices.ndvi} baseline={baseline.ndvi} direction="below" labels={L} />
-          <StressBar label={L.ndreBar} value={indices.ndre} baseline={baseline.ndre} direction="below" labels={L} />
-          <StressBar label={L.gndviBar} value={indices.gndvi} baseline={baseline.gndvi} direction="below" labels={L} />
-          <StressBar label={L.waterBar} value={indices.waterIndex} baseline={baseline.waterIndex} direction="both" labels={L} />
-
-          <div className="mt-4 p-3 bg-white rounded-xl">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">{L.interpTitle}</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
-              {stress.ndviStress > 0.3 && <li>• {L.interpItems.ndvi}</li>}
-              {stress.ndreStress > 0.3 && <li>• {L.interpItems.ndre}</li>}
-              {stress.gndviStress > 0.3 && <li>• {L.interpItems.gndvi}</li>}
-              {stress.waterStress > 0.3 && <li>• {L.interpItems.water}</li>}
-              {stress.score < STRESS_THRESHOLDS.healthy && <li className="text-green-600 font-medium">• {L.interpItems.healthy}</li>}
-            </ul>
-          </div>
-        </div>
-
-        {/* Batas Normal */}
-        <div className="bg-gray-50 mb-4 p-4 rounded-2xl">
-          <h2 className="text-lg font-semibold bg-gray-200 inline-block px-3 py-1 rounded-full mb-3">{L.baselineTitle}</h2>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="bg-white p-2 rounded-lg"><span className="font-medium">{L.baselineLabels.ndvi}:</span> {baseline.ndvi.mean} ± {baseline.ndvi.sd}</div>
-            <div className="bg-white p-2 rounded-lg"><span className="font-medium">{L.baselineLabels.ndre}:</span> {baseline.ndre.mean} ± {baseline.ndre.sd}</div>
-            <div className="bg-white p-2 rounded-lg"><span className="font-medium">{L.baselineLabels.gndvi}:</span> {baseline.gndvi.mean} ± {baseline.gndvi.sd}</div>
-            <div className="bg-white p-2 rounded-lg"><span className="font-medium">{L.baselineLabels.water}:</span> {baseline.waterIndex.mean} ± {baseline.waterIndex.sd}</div>
-          </div>
-          <p className="text-xs text-gray-400 mt-2">{L.baselineNote}</p>
-        </div>
-
-        {/* Grafik */}
-        <div className="grid grid-cols-1 gap-4">
-          <CustomChart data={historyForCharts} color="#22c55e" title={L.chartTitles.ndvi} dataKey="ndvi" />
-          <CustomChart data={historyForCharts} color="#6366f1" title={L.chartTitles.ndre} dataKey="ndre" />
-          <CustomChart data={historyForCharts} color="#10b981" title={L.chartTitles.gndvi} dataKey="gndvi" />
-          <CustomChart data={historyForCharts} color="#3b82f6" title={L.chartTitles.water} dataKey="waterIndex" />
-          <CustomChart data={historyForCharts} color="#f59e0b" title={L.chartTitles.stress} dataKey="stressScore" />
         </div>
       </div>
     </div>

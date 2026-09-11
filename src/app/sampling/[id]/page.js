@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { doc, onSnapshot, deleteField, updateDoc } from 'firebase/firestore';
 import { db } from '@/app/utils/firebase';
 import { getBaseline, getPlants } from '@/app/utils/baseline';
+import { computeBwdScore, getBwdLevel, BWD_LEVELS } from '@/app/utils/bwdScoring';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { Download, Trash2 } from 'lucide-react';
 

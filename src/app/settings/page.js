@@ -184,6 +184,31 @@ export default function Settings() {
           <p className="text-xs text-gray-400 mt-3">Bobot saat ini hardcoded. Ubah di kode jika diperlukan.</p>
         </div>
 
+        {/* BWD Weights */}
+        <div className="bg-white rounded-xl shadow-md p-5 mb-4">
+          <h2 className="text-lg font-bold text-gray-800 mb-3">Bobot Skor Kesuburan</h2>
+          <p className="text-xs text-gray-500 mb-3">Bobot untuk menghitung skor kesuburan tanaman</p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-700">NDVI (Vigor)</span>
+              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.40</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-700">NDRE (Klorofil / N)</span>
+              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.35</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-700">GNDVI (Kehijauan)</span>
+              <span className="text-sm font-mono bg-gray-100 px-2 py-0.5 rounded">0.25</span>
+            </div>
+          </div>
+          <div className="mt-3 bg-cyan-50 rounded-lg p-3 text-xs text-gray-600">
+            <p className="font-medium mb-1">Formula:</p>
+            <code className="font-mono">Skor Kesuburan = (0.4 × NDVI + 0.35 × NDRE + 0.25 × GNDVI) × 5</code>
+          </div>
+          <p className="text-xs text-gray-400 mt-3">Bobot saat ini hardcoded. Ubah di kode jika diperlukan.</p>
+        </div>
+
         {/* Default Reference */}
         <div className="bg-blue-50 rounded-xl shadow-md p-5 mb-4">
           <h2 className="text-lg font-bold text-blue-800 mb-3">Referensi Default</h2>

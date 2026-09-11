@@ -64,6 +64,15 @@ const stressScoring = [
   { range: '60 - 100%', condition: 'Parah', color: 'Merah', description: 'Stres berat, perlu tindakan segera' },
 ];
 
+const bwdScoring = [
+  { score: '1', condition: 'Sangat Kekurangan N', color: 'Kuning Pucat', description: 'Pemupukan N segera', rekomendasi: 'Dosis Tinggi' },
+  { score: '2', condition: 'Kekurangan N', color: 'Kuning Hijau', description: 'Perlu pemupukan N', rekomendasi: 'Dosis Sedang-Tinggi' },
+  { score: '3', condition: 'Cenderung Kekurangan N', color: 'Hijau Muda', description: 'Pertimbangkan pemupukan N', rekomendasi: 'Dosis Sedang' },
+  { score: '4', condition: 'N Cukup', color: 'Hijau', description: 'Pertahankan', rekomendasi: 'Dosis Rendah' },
+  { score: '5', condition: 'N Berlebih', color: 'Hijau Tua', description: 'Jangan tambah N', rekomendasi: 'Tidak Perlu' },
+  { score: '6', condition: 'N Sangat Berlebih', color: 'Hijau Sangat Tua', description: 'Hindari tambahan N', rekomendasi: 'Hindari' },
+];
+
 const StreakTable = ({ title, headers, data, renderRow }) => (
   <Card className="mb-6 shadow-lg hover:shadow-xl transition-shadow duration-200">
     <CardHeader>
@@ -157,6 +166,33 @@ export default function PanduanPadi() {
             <td className="p-3 border-b border-gray-200">{row.condition}</td>
             <td className="p-3 border-b border-gray-200">{row.color}</td>
             <td className="p-3 border-b border-gray-200">{row.description}</td>
+          </>
+        )}
+      />
+
+      <h2 className="text-2xl font-bold text-green-700 mt-8 mb-4">Skor Kesuburan Tanaman</h2>
+      <p className="mb-4 text-base text-gray-700">
+        Skor kesuburan menunjukkan status nitrogen tanaman berdasarkan analisis spektral. 
+        Skor ini membantu menentukan kapan tanaman perlu diberi pupuk N dan berapa takarannya.
+      </p>
+      <p className="mb-4 text-base text-gray-700">
+        Dalam aplikasi ini, skor kesuburan diestimasi dari indeks spektral:
+      </p>
+      <div className="bg-white p-4 rounded-lg shadow mb-4 text-sm font-mono text-gray-700">
+        Skor Kesuburan = (0.4 × NDVI + 0.35 × NDRE + 0.25 × GNDVI) × 5
+      </div>
+
+      <StreakTable
+        title="Level Skor Kesuburan dan Rekomendasi Pupuk N"
+        headers={['Level', 'Warna Daun', 'Status N', 'Dosis Pupuk', 'Rekomendasi']}
+        data={bwdScoring}
+        renderRow={(row, i) => (
+          <>
+            <td className="p-3 border-b border-gray-200 font-bold">{row.score}</td>
+            <td className="p-3 border-b border-gray-200">{row.color}</td>
+            <td className="p-3 border-b border-gray-200">{row.condition}</td>
+            <td className="p-3 border-b border-gray-200">{row.rekomendasi}</td>
+            <td className="p-3 border-b border-gray-200 font-medium">{row.rekomendasi}</td>
           </>
         )}
       />
