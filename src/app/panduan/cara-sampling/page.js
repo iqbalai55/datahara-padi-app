@@ -1,116 +1,80 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const StreakTable = ({ title, headers, data, renderRow }) => (
-  <Card className="mb-6 shadow-lg hover:shadow-xl transition-shadow duration-200">
-    <CardHeader>
-      <CardTitle className="text-lg font-semibold text-green-700">{title}</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead>
-            <tr>
-              {headers.map((header, index) => (
-                <th key={index} className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, rowIndex) => (
-              <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                {renderRow(row, rowIndex)}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </CardContent>
-  </Card>
-);
-
 const fertilityLevels = [
-  { level: 1, condition: 'Sangat Kekurangan N', leafColor: 'Kuning Pucat', nitrogenStatus: 'Sangat Kekurangan N', rekomendasi: 'Pemupukan N segera diperlukan', dosis: 'Pupuk N dosis tinggi segera', action: 'Berikan pupuk N dosis tinggi segera. Tanaman sangat membutuhkan nitrogen.' },
-  { level: 2, condition: 'Kekurangan N', leafColor: 'Kuning Hijau', nitrogenStatus: 'Kekurangan N', rekomendasi: 'Perlu pemupukan N', dosis: 'Pupuk N dosis sedang–tinggi', action: 'Lakukan pemupukan N dengan dosis sedang hingga tinggi. Pantau dalam 3-5 hari.' },
-  { level: 3, condition: 'Cenderung Kekurangan N', leafColor: 'Hijau Muda', nitrogenStatus: 'Cenderung Kekurangan N', rekomendasi: 'Pertimbangkan pemupukan N', dosis: 'Pupuk N dosis sedang', action: 'Pertimbangkan pemupukan N dosis sedang. Pantau perkembangan sebelum memutuskan.' },
-  { level: 4, condition: 'N Cukup', leafColor: 'Hijau', nitrogenStatus: 'N Cukup', rekomendasi: 'Pertahankan, tidak perlu menambah N', dosis: 'Pemupukan N tidak diperlukan sementara', action: 'Kondisi baik. Pertahankan jadwal pemupukan yang ada. Tidak perlu tambahan N.' },
-  { level: 5, condition: 'N Berlebih', leafColor: 'Hijau Tua', nitrogenStatus: 'N Berlebih', rekomendasi: 'Jangan menambah N', dosis: 'Hentikan pemberian pupuk N', action: 'Hentikan pemberian pupuk N. Kelebihan N dapat mengundang hama dan menurunkan kualitas.' },
-  { level: 6, condition: 'N Sangat Berlebih', leafColor: 'Hijau Sangat Tua', nitrogenStatus: 'N Sangat Berlebih', rekomendasi: 'Hindari tambahan N', dosis: 'Hindari pupuk N, risiko toksisitas', action: 'Hindari pupuk N sepenuhnya. Risiko toksisitas nitrogen. Pertimbangkan irigasi untuk mengurangi konsentrasi N di tanah.' },
+  { level: 1, condition: 'Sangat Kekurangan N', leafColor: 'Kuning Pucat', rekomendasi: 'Pemupukan N segera diperlukan', action: 'Berikan pupuk N dosis tinggi segera.' },
+  { level: 2, condition: 'Kekurangan N', leafColor: 'Kuning Hijau', rekomendasi: 'Perlu pemupukan N', action: 'Lakukan pemupukan N dengan dosis sedang hingga tinggi.' },
+  { level: 3, condition: 'Cenderung Kekurangan N', leafColor: 'Hijau Muda', rekomendasi: 'Pertimbangkan pemupukan N', action: 'Pertimbangkan pemupukan N dosis sedang.' },
+  { level: 4, condition: 'N Cukup', leafColor: 'Hijau', rekomendasi: 'Tidak perlu menambah N', action: 'Pertahankan jadwal pemupukan yang ada.' },
+  { level: 5, condition: 'N Berlebih', leafColor: 'Hijau Tua', rekomendasi: 'Jangan menambah N', action: 'Hentikan pemberian pupuk N.' },
+  { level: 6, condition: 'N Sangat Berlebih', leafColor: 'Hijau Sangat Tua', rekomendasi: 'Hindari tambahan N', action: 'Hindari pupuk N, risiko toksisitas.' },
 ];
 
 const measurementSchedule = [
-  { phase: 'Pertumbuhan Awal', hst: '0 – 14 HST', frequency: '1–2 kali', description: 'Pengukuran awal untuk memastikan tanaman memiliki nitrogen yang cukup saat fase vegetatif awal.' },
-  { phase: 'Pembentukan Anakan Aktif', hst: '21 – 28 HST', frequency: 'Setiap 7–10 hari', description: 'Fase kritis di mana tanaman membutuhkan nitrogen untuk pembentukan anakan. Pantau secara berkala.' },
-  { phase: 'Fase Primordial / Pembentukan Malai', hst: '35 – 40 HST', frequency: '1–2 kali', description: 'Pengukuran menjelang fase generatif untuk memastikan nitrogen cukup hingga masa panen.' },
+  { phase: 'Pertumbuhan Awal', hst: '0 – 14 HST', frequency: '1–2 kali', description: 'Pengukuran awal untuk memastikan nitrogen cukup saat vegetatif awal.' },
+  { phase: 'Pembentukan Anakan Aktif', hst: '21 – 28 HST', frequency: 'Setiap 7–10 hari', description: 'Fase kritis untuk pembentukan anakan. Pantau secara berkala.' },
+  { phase: 'Pembentukan Malai', hst: '35 – 40 HST', frequency: '1–2 kali', description: 'Pengukuran menjelang fase generatif hingga masa panen.' },
 ];
 
 const stressLevels = [
-  { range: '0 – 20%', condition: 'Sehat', color: 'Hijau', interpretation: 'Tanaman dalam kondisi sehat, semua indeks spektral dalam batas normal.' },
-  { range: '20 – 40%', condition: 'Ringan', color: 'Kuning', interpretation: 'Stres ringan mulai terdeteksi. Perlu monitoring lebih sering. Bisa jadi awal kekurangan air atau N.' },
-  { range: '40 – 60%', condition: 'Sedang', color: 'Oranye', interpretation: 'Stres sedang. Jika NDRE turun lebih dari NDVI → kemungkinan besar stres klorofil / kekurangan N. Jika Water Index abnormal → stres air.' },
-  { range: '60 – 100%', condition: 'Parah', color: 'Merah', interpretation: 'Stres berat. Tindakan segera diperlukan. Periksa kondisi air, hama, dan nutrient tanah.' },
-];
-
-const spectralIndices = [
-  { name: 'NDVI', formula: '(R810 − R645) ÷ (R810 + R645)', baseline: '0.82 ± 0.03', interpretation: 'Mengukur vigor umum tanaman. Nilai tinggi = tanaman sehat & aktif berfotosintesis. Rendah bisa karena stres air, penyakit, atau daun tua.' },
-  { name: 'NDRE', formula: '(R810 − R705) ÷ (R810 + R705)', baseline: '0.35 ± 0.05', interpretation: 'Indikator klorofil & nitrogen paling sensitif. Red edge 705nm sangat peka terhadap perubahan kandungan klorofil daun.' },
-  { name: 'GNDVI', formula: '(R810 − R560) ÷ (R810 + R560)', baseline: '0.65 ± 0.04', interpretation: 'Indikator kehijauan daun. Melengkapi NDVI dan NDRE untuk gambaran lebih lengkap.' },
-  { name: 'Water Index', formula: 'R940 ÷ R860', baseline: '1.05 ± 0.03', interpretation: 'Rasio penyerapan air. 940nm adalah band penyerapan air, 860nm referensi NIR. Abnormal = indikasi stres air.' },
+  { range: '0 – 20%', condition: 'Sehat', color: 'Hijau', interpretation: 'Tanaman dalam kondisi sehat.' },
+  { range: '20 – 40%', condition: 'Ringan', color: 'Kuning', interpretation: 'Stres ringan, perlu monitoring lebih sering.' },
+  { range: '40 – 60%', condition: 'Sedang', color: 'Oranye', interpretation: 'Stres sedang, kemungkinan kekurangan air atau N.' },
+  { range: '60 – 100%', condition: 'Parah', color: 'Merah', interpretation: 'Stres berat, tindakan segera diperlukan.' },
 ];
 
 export default function PanduanCaraSampling() {
   return (
     <div className="p-6 max-w-full bg-gradient-to-br from-green-50 to-blue-50 rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-6 text-green-800 text-center">Panduan Sampling & Interpretasi Level</h1>
-
-      {/* PENDAHULUAN */}
-      <h2 className="text-2xl font-bold text-green-700 mt-8 mb-4">Tentang Sistem Ini</h2>
-      <p className="mb-4 text-base text-gray-700">
-        Aplikasi ini menggunakan <strong>sensor spektral AS7265x</strong> (18 channel, 410–940nm) untuk menganalisis kondisi tanaman padi melalui indeks spektral. 
-        Berbeda dengan Bagan Warna Daun (BWD) tradisional yang mengandalkan perbandingan warna visual, sistem ini mengukur refleksi cahaya secara objektif dan konsisten.
-      </p>
+      <h1 className="text-3xl font-bold mb-6 text-green-800 text-center">Cara Sampling & Interpretasi Level</h1>
 
       {/* TATA CARA SAMPLING */}
       <h2 className="text-2xl font-bold text-green-700 mt-8 mb-4">Tata Cara Pengambilan Sample</h2>
-
-      <p className="mb-4 text-base text-gray-700">
-        Pengambilan sample menggunakan sensor spektral <strong>AS7265x</strong> (18 channel, 410–940nm) yang terpasang pada perangkat portable. Berikut langkah-langkahnya:
-      </p>
 
       <div className="bg-white p-5 rounded-lg shadow mb-6 text-sm text-gray-700 space-y-4">
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">1</span>
           <div>
-            <p className="font-semibold">Nyalakan perangkat sensor</p>
-            <p className="text-gray-600">Tunggu hingga sensor siap (indikator LED stabil). Pastikan baterai cukup untuk sesi sampling.</p>
+            <p className="font-semibold">Pilih 10 rumpun tanaman padi sehat secara acak</p>
+            <p className="text-gray-600">Dari areal yang akan diukur, pilih 10 rumpun yang sehat dan merepresentasikan kondisi umum tanaman di sawah Anda.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">2</span>
           <div>
-            <p className="font-semibold">Posisikan sensor menghadap daun</p>
-            <p className="text-gray-600">Dekatkan sensor sekitar <strong>5–10 cm</strong> dari permukaan daun atas. Pastikan sensor tegak lurus (90°) terhadap permukaan daun. Hindari bayangan pada area yang diukur.</p>
+            <p className="font-semibold">Ukur daun teratas yang sudah terbuka penuh</p>
+            <p className="text-gray-600">Pada setiap rumpun, arahkan sensor ke daun teratas yang sudah terbuka penuh. Posisikan sensor sekitar 5–10 cm dari permukaan daun, tegak lurus (90°).</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">3</span>
           <div>
-            <p className="font-semibold">Ambil pembacaan</p>
-            <p className="text-gray-600">Tekan tombol sampling pada perangkat. Data 18 channel akan otomatis dikirim ke aplikasi via <strong>Firebase</strong>. Pastikan koneksi internet aktif.</p>
+            <p className="font-semibold">Jangan menghadap cahaya matahari</p>
+            <p className="text-gray-600">Saat mengukur, jangan menghadap langsung ke cahaya matahari. Pantulan cahaya dapat mempengaruhi hasil pengukuran.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">4</span>
           <div>
-            <p className="font-semibold">Ulangi untuk titik berbeda</p>
-            <p className="text-gray-600">Untuk satu tanaman, ambil minimal <strong>3–5 titik</strong> sampel dari daun yang berbeda (atas, tengah, bawah). Ini membantu merata-ratakan hasil analisis.</p>
+            <p className="font-semibold">Catat hasil pengukuran</p>
+            <p className="text-gray-600">Data dari setiap pengukuran akan otomatis tersimpan di aplikasi. Jika warna daun berada di antara dua skala, ambil nilai rata-rata (misal 4,5 jika di antara skala 4 dan 5).</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">5</span>
           <div>
+            <p className="font-semibold">Hitung rata-rata dan tentukan tindakan</p>
+            <p className="text-gray-600">
+              Rata-rata dari 10 rumpun menentukan kondisi tanaman. Jika rata-rata <strong>kurang dari 4</strong> → tanaman perlu pupuk N sesuai fase dan umur. 
+              Jika rata-rata <strong>lebih dari 4</strong> → tanaman tidak perlu pupuk N tambahan.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3">
+          <span className="flex-shrink-0 w-7 h-7 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xs">6</span>
+          <div>
             <p className="font-semibold">Cek hasil di aplikasi</p>
-            <p className="text-gray-600">Buka halaman kebun atau sampling untuk melihat hasil analisis otomatis: indeks spektral, skor stres, skor kesuburan, dan rekomendasi pemupukan.</p>
+            <p className="text-gray-600">Buka halaman kebun atau sampling untuk melihat analisis lengkap: kondisi tanaman, skor stres, skor kesuburan, dan rekomendasi pemupukan.</p>
           </div>
         </div>
       </div>
@@ -121,13 +85,11 @@ export default function PanduanCaraSampling() {
         </CardHeader>
         <CardContent>
           <ul className="text-sm text-gray-700 space-y-2 list-disc ml-4">
-            <li>Waktu terbaik: <strong>pukul 09.00 – 11.00</strong> saat cahaya matahari cukup tapi belum terlalu panas. Hindari pengukuran saat matahari terik langsung karena pantulan cahaya dapat mempengaruhi pembacaan.</li>
-            <li>Hindari sampling setelah hujan — daun basah bisa mempengaruhi pembacaan Water Index.</li>
-            <li>Pilih daun yang <strong>sehat secara fisik</strong> (tidak robek, tidak ada hama) untuk representasi kondisi sebenarnya.</li>
-            <li>Hindari pengukuran pada daun yang terkena bayangan langsung dari objek lain.</li>
-            <li>Catat kondisi lapangan (cuaca, kelembapan, kondisi tanah) sebagai konteks tambahan.</li>
-            <li>Lakukan kalibrasi sensor secara berkala sesuai panduan pabrikan.</li>
             <li>Pengukuran dilakukan pada <strong>waktu dan orang yang sama</strong> untuk menjaga konsistensi data.</li>
+            <li>Sebaiknya pengukuran dilakukan pada <strong>pagi atau sore hari</strong>, saat cahaya matahari tidak terlalu terik.</li>
+            <li>Hindari pengukuran setelah hujan — daun basah bisa mempengaruhi hasil pembacaan.</li>
+            <li>Pilih daun yang <strong>sehat secara fisik</strong> (tidak robek, tidak ada hama) untuk representasi kondisi sebenarnya.</li>
+            <li>Catat kondisi lapangan (cuaca, kelembapan, kondisi tanah) sebagai konteks tambahan.</li>
           </ul>
         </CardContent>
       </Card>
@@ -135,62 +97,36 @@ export default function PanduanCaraSampling() {
       {/* JADWAL PENGUKURAN */}
       <h2 className="text-2xl font-bold text-green-700 mt-10 mb-4">Kapan Melakukan Pengukuran?</h2>
       <p className="mb-4 text-sm text-gray-700">
-        Pengukuran spektral dilakukan berdasarkan fase pertumbuhan tanaman padi. Berikut jadwal yang direkomendasikan:
-      </p>
-      <StreakTable
-        title="Jadwal Pengukuran Berdasarkan Fase Pertumbuhan"
-        headers={['Fase', 'Umur (HST)', 'Frekuensi', 'Keterangan']}
-        data={measurementSchedule}
-        renderRow={(row, i) => (
-          <>
-            <td className="p-3 border-b border-gray-200 font-bold">{row.phase}</td>
-            <td className="p-3 border-b border-gray-200 font-mono text-xs">{row.hst}</td>
-            <td className="p-3 border-b border-gray-200">{row.frequency}</td>
-            <td className="p-3 border-b border-gray-200 text-xs">{row.description}</td>
-          </>
-        )}
-      />
-
-      {/* PERBANDINGAN DENGAN BWD TRADISIONAL */}
-      <h2 className="text-2xl font-bold text-green-700 mt-10 mb-4">Perbandingan dengan BWD Tradisional</h2>
-      <p className="mb-4 text-sm text-gray-700">
-        Sistem sensor spektral ini memiliki keunggulan dibanding Bagan Warna Daun (BWD) tradisional:
+        Pengukuran dilakukan berdasarkan fase pertumbuhan tanaman padi. Berikut jadwal yang direkomendasikan:
       </p>
       <Card className="mb-6 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-green-700">Keunggulan Sensor Spektral</CardTitle>
-        </CardHeader>
         <CardContent>
-          <ul className="text-sm text-gray-700 space-y-2 list-disc ml-4">
-            <li><strong>Objektif</strong> — Mengukur refleksi cahaya secara kuantitatif, tidak bergantung pada persepsi warna mata manusia.</li>
-            <li><strong>Konsisten</strong> — Hasil pengukuran tidak berubah meskipun dilakukan oleh orang berbeda atau pada kondisi pencahayaan berbeda.</li>
-            <li><strong>Multi-parameter</strong> — Tidak hanya mengukur status N, tetapi juga vigor (NDVI), klorofil (NDRE), kehijauan (GNDVI), dan status air (Water Index).</li>
-            <li><strong>Real-time</strong> — Hasil analisis langsung tersedia di aplikasi tanpa perlu perbandingan visual manual.</li>
-            <li><strong>Terukur</strong> — Setiap pengukuran menghasilkan data numerik yang bisa dipantau trennya dari waktu ke waktu.</li>
-          </ul>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Fase</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Umur (HST)</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Frekuensi</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {measurementSchedule.map((row, i) => (
+                  <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="p-3 border-b border-gray-200 font-bold">{row.phase}</td>
+                    <td className="p-3 border-b border-gray-200 font-mono text-xs">{row.hst}</td>
+                    <td className="p-3 border-b border-gray-200">{row.frequency}</td>
+                    <td className="p-3 border-b border-gray-200 text-xs">{row.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 
-      <Card className="mb-6 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-amber-700">Referensi: Metode BWD Tradisional</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-700 mb-3">
-            Bagan Warna Daun (BWD) tradisional menggunakan perbandingan warna visual daun dengan skala warna baku. Berikut ringkasan metodenya:
-          </p>
-          <ol className="text-sm text-gray-700 space-y-2 list-decimal ml-4">
-            <li>Pilih 10 rumpun tanaman padi sehat secara acak dari areal yang akan diukur.</li>
-            <li>Ukur daun teratas yang sudah terbuka penuh pada satu rumpun.</li>
-            <li>Bandingkan warna daun dengan skala warna pada BWD. Jika di antara dua skala, ambil nilai rata-rata.</li>
-            <li>Hitung rata-rata dari 10 rumpun. Jika nilai &lt; 4 → tanaman perlu pupuk N. Jika nilai ≥ 4 → tidak perlu pupuk N tambahan.</li>
-          </ol>
-          <p className="text-xs text-gray-500 mt-3">
-            <strong>Catatan:</strong> Sistem sensor spektral kami mengintegrasikan prinsip yang sama namun dengan pengukuran yang lebih presisi dan konsisten.
-          </p>
-        </CardContent>
-      </Card>
-
+      {/* FAKTOR PENGARUH */}
       <Card className="mb-6 shadow-lg">
         <CardHeader>
           <CardTitle className="text-lg font-semibold text-amber-700">Faktor yang Mempengaruhi Hasil Pengukuran</CardTitle>
@@ -213,78 +149,75 @@ export default function PanduanCaraSampling() {
       <h2 className="text-2xl font-bold text-green-700 mt-10 mb-4">Penjelasan Level</h2>
 
       <p className="mb-4 text-base text-gray-700">
-        Aplikasi ini menampilkan dua jenis skor utama untuk menilai kondisi tanaman: <strong>Skor Stres</strong> dan <strong>Skor Kesuburan</strong>. Berikut penjelasan masing-masing level.
+        Aplikasi ini menampilkan dua jenis skor utama untuk menilai kondisi tanaman: <strong>Skor Stres</strong> dan <strong>Skor Kesuburan</strong>.
       </p>
-
-      {/* Indeks Spektral */}
-      <h3 className="text-xl font-bold text-green-600 mt-6 mb-3">Indeks Spektral yang Digunakan</h3>
-      <p className="mb-4 text-sm text-gray-700">
-        Keempat indeks ini dihitung langsung dari data 18 channel sensor AS7265x. Nilai indeks dibandingkan dengan baseline padi sehat untuk menentukan kondisi tanaman.
-      </p>
-      <StreakTable
-        title="Indeks Spektral & Baseline Padi Sehat"
-        headers={['Indeks', 'Formula', 'Baseline', 'Interpretasi']}
-        data={spectralIndices}
-        renderRow={(row, i) => (
-          <>
-            <td className="p-3 border-b border-gray-200 font-bold">{row.name}</td>
-            <td className="p-3 border-b border-gray-200 font-mono text-xs">{row.formula}</td>
-            <td className="p-3 border-b border-gray-200 font-mono text-xs">{row.baseline}</td>
-            <td className="p-3 border-b border-gray-200 text-xs">{row.interpretasi}</td>
-          </>
-        )}
-      />
 
       {/* Skor Stres */}
-      <h3 className="text-xl font-bold text-green-600 mt-8 mb-3">Skor Stres Tanaman</h3>
-      <p className="mb-2 text-sm text-gray-700">
-        Skor stres menggambarkan seberapa jauh kondisi tanaman menyimpang dari baseline sehat. Semakin tinggi skor, semakin besar stres yang dialami tanaman.
+      <h3 className="text-xl font-bold text-green-600 mt-6 mb-3">Skor Stres Tanaman</h3>
+      <p className="mb-4 text-sm text-gray-700">
+        Skor stres menggambarkan seberapa jauh kondisi tanaman menyimpang dari kondisi sehat. Semakin tinggi skor, semakin besar stres yang dialami tanaman.
       </p>
-      <div className="bg-white p-4 rounded-lg shadow mb-4 text-sm font-mono text-gray-700">
-        Stress Score = 0.35 × NDVI_stress + 0.40 × NDRE_stress + 0.25 × GNDVI_stress
-      </div>
-      <p className="mb-4 text-xs text-gray-500">
-        Setiap komponen stres dihitung sebagai deviasi dari baseline (mean − 2×SD). NDRE diberi bobot tertinggi karena paling sensitif terhadap kekurangan N.
-      </p>
-      <StreakTable
-        title="Kategori Skor Stres"
-        headers={['Skor Stres', 'Kondisi', 'Warna', 'Interpretasi']}
-        data={stressLevels}
-        renderRow={(row, i) => (
-          <>
-            <td className="p-3 border-b border-gray-200 font-bold">{row.range}</td>
-            <td className="p-3 border-b border-gray-200 font-medium">{row.condition}</td>
-            <td className="p-3 border-b border-gray-200">{row.color}</td>
-            <td className="p-3 border-b border-gray-200 text-xs">{row.interpretation}</td>
-          </>
-        )}
-      />
+      <Card className="mb-6 shadow-lg">
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Skor Stres</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Kondisi</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Warna</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Interpretasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stressLevels.map((row, i) => (
+                  <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="p-3 border-b border-gray-200 font-bold">{row.range}</td>
+                    <td className="p-3 border-b border-gray-200 font-medium">{row.condition}</td>
+                    <td className="p-3 border-b border-gray-200">{row.color}</td>
+                    <td className="p-3 border-b border-gray-200 text-xs">{row.interpretation}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Skor Kesuburan */}
-      <h3 className="text-xl font-bold text-green-600 mt-8 mb-3">Skor Kesuburan</h3>
-      <p className="mb-2 text-sm text-gray-700">
-        Skor kesuburan menunjukkan status nitrogen tanaman berdasarkan kombinasi indeks spektral. Digunakan untuk menentukan kapan dan berapa banyak pupuk nitrogen yang diperlukan.
+      <h3 className="text-xl font-bold text-green-600 mt-6 mb-3">Skor Kesuburan</h3>
+      <p className="mb-4 text-sm text-gray-700">
+        Skor kesuburan menunjukkan status nitrogen tanaman. Digunakan untuk menentukan kapan dan berapa banyak pupuk nitrogen yang diperlukan. 
+        Skor berkisar dari 1 (sangat kekurangan N) hingga 6 (sangat berlebih N). Level 4 adalah kondisi ideal.
       </p>
-      <div className="bg-white p-4 rounded-lg shadow mb-4 text-sm font-mono text-gray-700">
-        Skor Kesuburan = (0.4 × NDVI + 0.35 × NDRE + 0.25 × GNDVI) × 5
-      </div>
-      <p className="mb-4 text-xs text-gray-500">
-        Skor berkisar dari 1 (sangat kekurangan N) hingga 6 (sangat berlebih N). Level 4 adalah kondisi ideal di mana N cukup tanpa perlu penambahan.
-      </p>
-      <StreakTable
-        title="Level Skor Kesuburan & Rekomendasi Pemupukan"
-        headers={['Level', 'Warna Daun', 'Status N', 'Rekomendasi', 'Aksi']}
-        data={fertilityLevels}
-        renderRow={(row, i) => (
-          <>
-            <td className="p-3 border-b border-gray-200 font-bold text-center">{row.level}</td>
-            <td className="p-3 border-b border-gray-200">{row.leafColor}</td>
-            <td className="p-3 border-b border-gray-200 font-medium">{row.nitrogenStatus}</td>
-            <td className="p-3 border-b border-gray-200 text-xs">{row.rekomendasi}</td>
-            <td className="p-3 border-b border-gray-200 text-xs">{row.action}</td>
-          </>
-        )}
-      />
+      <Card className="mb-6 shadow-lg">
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Level</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Warna Daun</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Kondisi</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Rekomendasi</th>
+                  <th className="p-3 text-left bg-green-100 text-green-800 border-b border-green-200">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fertilityLevels.map((row, i) => (
+                  <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="p-3 border-b border-gray-200 font-bold text-center">{row.level}</td>
+                    <td className="p-3 border-b border-gray-200">{row.leafColor}</td>
+                    <td className="p-3 border-b border-gray-200 font-medium">{row.condition}</td>
+                    <td className="p-3 border-b border-gray-200 text-xs">{row.rekomendasi}</td>
+                    <td className="p-3 border-b border-gray-200 text-xs">{row.action}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Cara Membaca Hasil */}
       <h2 className="text-2xl font-bold text-green-700 mt-10 mb-4">Cara Membaca Hasil di Aplikasi</h2>
