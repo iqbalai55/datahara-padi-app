@@ -11,9 +11,8 @@ const fertilityLevels = [
 ];
 
 const measurementSchedule = [
-  { phase: 'Pertumbuhan Awal', hst: '0 – 14 HST', frequency: '2–3 kali', description: 'Pengukuran awal untuk memastikan nitrogen cukup saat vegetatif awal.' },
-  { phase: 'Pembentukan Anakan Aktif', hst: '21 – 28 HST', frequency: 'Setiap 7–10 hari', description: 'Fase kritis untuk pembentukan anakan. Pantau secara berkala, berikan pupuk N jika skor di bawah 4.' },
-  { phase: 'Fase Primordial / Pembentukan Malai', hst: '35 – 40 HST', frequency: '2–3 kali', description: 'Pengukuran menjelang fase generatif hingga masa panen.' },
+  { phase: 'Pengukuran Dimulai', hst: '25 – 28 HST', frequency: 'Setiap 7–10 hari', description: 'Mulai lakukan pengukuran warna daun. Sebelumnya (0–14 HST) tanaman sudah diberi pupuk dasar N.' },
+  { phase: 'Pengukuran Berkala', hst: '28 – Primordial', frequency: 'Setiap 7–10 hari', description: 'Lanjutkan pengukuran sampai fase bunting/primordia. Minimal 2–3 kali pemeriksaan hingga panen.' },
 ];
 
 const stressLevels = [
