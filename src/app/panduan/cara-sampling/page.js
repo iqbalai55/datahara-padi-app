@@ -11,8 +11,7 @@ const fertilityLevels = [
 ];
 
 const measurementSchedule = [
-  { phase: 'Pengukuran Dimulai', hst: '25 – 28 HST', frequency: 'Setiap 7–10 hari', description: 'Mulai lakukan pengukuran warna daun. Sebelumnya (0–14 HST) tanaman sudah diberi pupuk dasar N.' },
-  { phase: 'Pengukuran Berkala', hst: '28 – Primordial', frequency: 'Setiap 7–10 hari', description: 'Lanjutkan pengukuran sampai fase bunting/primordia. Minimal 2–3 kali pemeriksaan hingga panen.' },
+  { phase: 'Pengukuran Berkala', hst: '21 – 28 HST mulai', frequency: 'Setiap 7–10 hari', description: 'Lakukan pengukuran warna daun secara berkala. Apabila hasil pengukuran berada di bawah skala 4, tanaman segera diberi pupuk N.' },
 ];
 
 const stressLevels = [
