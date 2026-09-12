@@ -85,15 +85,15 @@ export async function POST(request) {
 <head><meta charset="utf-8"></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1f2937;max-width:620px;margin:0 auto;padding:20px">
   <div style="background:linear-gradient(135deg,#16a34a,#15803d);color:white;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-    <h1 style="margin:0;font-size:22px">🌱 Laporan Kondisi Tanaman</h1>
+    <h1 style="margin:0;font-size:22px">Laporan Kondisi Tanaman</h1>
     <p style="margin:8px 0 0;opacity:0.9">${plantName || 'Tanaman Padi'}</p>
   </div>
 
   <div style="background:#f9fafb;padding:20px;border:1px solid #e5e7eb;border-top:none">
-    <p style="color:#6b7280;font-size:13px;margin:0 0 16px">📅 ${now}</p>
+    <p style="color:#6b7280;font-size:13px;margin:0 0 16px">${now}</p>
 
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
-      <h2 style="margin:0 0 12px;font-size:16px;color:#374151">📊 Kondisi Tanaman</h2>
+      <h2 style="margin:0 0 12px;font-size:16px;color:#374151">Kondisi Tanaman</h2>
       <table style="width:100%;font-size:14px">
         <tr><td style="padding:4px 0;color:#6b7280">Status</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeCondition.label}</td></tr>
         <tr><td style="padding:4px 0;color:#6b7280">Level</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeBwd.level} — ${safeBwd.condition}</td></tr>
@@ -103,7 +103,7 @@ export async function POST(request) {
     </div>
 
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
-      <h2 style="margin:0 0 12px;font-size:16px;color:#374151">🔬 Indeks Spektral Terkini</h2>
+      <h2 style="margin:0 0 12px;font-size:16px;color:#374151">Indeks Spektral Terkini</h2>
       <table style="width:100%;font-size:14px">
         <tr><td style="padding:4px 0;color:#6b7280">NDVI</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeIndices.ndvi.toFixed(4)}</td></tr>
         <tr><td style="padding:4px 0;color:#6b7280">NDRE</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeIndices.ndre.toFixed(4)}</td></tr>
@@ -113,12 +113,12 @@ export async function POST(request) {
     </div>
 
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
-      <h2 style="margin:0 0 4px;font-size:16px;color:#374151">💡 Rekomendasi</h2>
+      <h2 style="margin:0 0 4px;font-size:16px;color:#374151">Rekomendasi</h2>
       <p style="margin:0;font-size:14px;color:#4b5563">${safeBwd.rekomendasi}</p>
     </div>
 
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
-      <h2 style="margin:0 0 12px;font-size:16px;color:#374151">📋 Tabel Raw Sampling</h2>
+      <h2 style="margin:0 0 12px;font-size:16px;color:#374151">Tabel Raw Sampling</h2>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead>
