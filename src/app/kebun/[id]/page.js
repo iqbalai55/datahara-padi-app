@@ -7,6 +7,7 @@ import { getBaseline, getPlants, getWeights } from '@/app/utils/baseline';
 import { computeBwdScore, getBwdLevel, BWD_LEVELS } from '@/app/utils/bwdScoring';
 import { computeIndexStress, computeStressScore, getStressBarColor } from '@/app/utils/stressScoring';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Mail } from 'lucide-react';
 import moment from 'moment';
 
 const MODE_KEY = 'datahara_display_mode';
@@ -79,7 +80,7 @@ const LABELS = {
 const SPECTRAL_CHANNELS = {
   channelA: 410, channelB: 435, channelC: 460, channelD: 485,
   channelE: 510, channelF: 535, channelG: 560, channelH: 585,
-  channelR: 610, channelI: 645, channelS: 680, channelJ: 705,
+  channelR: 680, channelI: 645, channelS: 680, channelJ: 705,
   channelT: 730, channelU: 760, channelV: 810, channelW: 860,
   channelK: 900, channelL: 940
 };
@@ -220,6 +221,10 @@ export default function Lokasi() {
   const [baseline, setBaseline] = useState(null);
   const [mode, setMode] = useState('awam');
   const [plantName, setPlantName] = useState('');
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailTo, setEmailTo] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailResult, setEmailResult] = useState(null);
 
   useEffect(() => {
     setBaseline(getBaseline());
@@ -289,6 +294,39 @@ export default function Lokasi() {
   const indices = latestSampling ? computeSpectralIndices(latestSampling) : { ndvi: 0, ndre: 0, gndvi: 0, waterIndex: 0 };
   const stress = computeStressScore(indices, baseline);
   const condition = determineCondition(stress, L);
+  const bwdScore = computeBwdScore(indices.ndvi, indices.ndre, indices.gndvi, getWeights().bwd);
+  const bwdLevel = getBwdLevel(bwdScore);
+
+  const handleSendEmail = async () => {
+    if (!emailTo.trim()) return;
+    setEmailSending(true);
+    setEmailResult(null);
+    try {
+      const resp = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: emailTo.trim(),
+          plantName,
+          condition,
+          bwdLevel,
+          indices,
+          samplingData: samplingData.slice(0, 10),
+        }),
+      });
+      const result = await resp.json();
+      if (resp.ok) {
+        setEmailResult({ success: true });
+        setEmailTo('');
+      } else {
+        setEmailResult({ success: false, error: result.error });
+      }
+    } catch (err) {
+      setEmailResult({ success: false, error: err.message });
+    } finally {
+      setEmailSending(false);
+    }
+  };
 
   const historyForCharts = {};
   samplingData.forEach((sample) => {
@@ -312,9 +350,6 @@ export default function Lokasi() {
 
         {/* Analisis Kondisi */}
         {(() => {
-          const bwdScore = computeBwdScore(indices.ndvi, indices.ndre, indices.gndvi, getWeights().bwd);
-          const bwdLevel = getBwdLevel(bwdScore);
-
           const issues = [];
 
           const rekomendasiColor = bwdLevel.level <= 2 ? 'text-red-600' : bwdLevel.level <= 3 ? 'text-orange-600' : bwdLevel.level <= 4 ? 'text-green-600' : 'text-blue-600';
@@ -378,7 +413,63 @@ export default function Lokasi() {
             </div>
           </div>
         </div>
+
+        {/* Kirim ke Email */}
+        <button
+          onClick={() => { setShowEmailModal(true); setEmailResult(null); }}
+          className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-2xl transition-colors"
+        >
+          <Mail size={20} />
+          Kirim ke Email
+        </button>
       </div>
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowEmailModal(false)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold mb-4">Kirim Laporan ke Email</h3>
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Email Tujuan</label>
+            <input
+              type="email"
+              value={emailTo}
+              onChange={(e) => setEmailTo(e.target.value)}
+              placeholder="contoh@email.com"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              disabled={emailSending}
+            />
+
+            {emailResult && (
+              <div className={`mb-4 p-3 rounded-lg text-sm ${emailResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                {emailResult.success ? '✅ Email berhasil dikirim!' : `❌ Gagal: ${emailResult.error}`}
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowEmailModal(false)}
+                className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                disabled={emailSending}
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleSendEmail}
+                disabled={emailSending || !emailTo.trim()}
+                className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {emailSending ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    Mengirim...
+                  </>
+                ) : 'Kirim'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
