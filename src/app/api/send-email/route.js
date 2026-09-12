@@ -169,7 +169,7 @@ export async function POST(request) {
       { key: 'ndvi', label: 'NDVI History', color: '#16a34a' },
       { key: 'ndre', label: 'NDRE History', color: '#2563eb' },
       { key: 'gndvi', label: 'GNDVI History', color: '#9333ea' },
-      { key: 'water', label: 'Water Index History', color: '#0891b2' },
+      { key: 'waterIndex', label: 'Water Index History', color: '#0891b2' },
     ];
 
     const metricPngs = await Promise.all(
