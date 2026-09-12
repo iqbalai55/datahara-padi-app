@@ -193,7 +193,7 @@ export async function POST(request) {
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({
-      from: 'Datahara <onboarding@resend.dev>',
+      from: 'Datahara <datahara@tabtech.id>',
       to: [to],
       subject: `[Datahara] Laporan ${plantName || 'Tanaman Padi'}`,
       html,
