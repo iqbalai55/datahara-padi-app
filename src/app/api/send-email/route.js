@@ -57,6 +57,9 @@ export async function POST(request) {
     }
 
     const now = new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+    const safeIndices = indices || { ndvi: 0, ndre: 0, gndvi: 0, waterIndex: 0 };
+    const safeCondition = condition || { label: '-' };
+    const safeBwd = bwdLevel || { level: '-', condition: '-', nitrogenStatus: '-', dosis: '-', rekomendasi: '-' };
 
     // Prepare data (oldest first, max 5)
     const sorted = [...samplingData].sort((a, b) => parseInt(a.time) - parseInt(b.time)).slice(0, 5);
@@ -92,26 +95,26 @@ export async function POST(request) {
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
       <h2 style="margin:0 0 12px;font-size:16px;color:#374151">📊 Kondisi Tanaman</h2>
       <table style="width:100%;font-size:14px">
-        <tr><td style="padding:4px 0;color:#6b7280">Status</td><td style="padding:4px 0;font-weight:bold;text-align:right">${condition.label}</td></tr>
-        <tr><td style="padding:4px 0;color:#6b7280">Level</td><td style="padding:4px 0;font-weight:bold;text-align:right">${bwdLevel.level} — ${bwdLevel.condition}</td></tr>
-        <tr><td style="padding:4px 0;color:#6b7280">Status N</td><td style="padding:4px 0;text-align:right">${bwdLevel.nitrogenStatus}</td></tr>
-        <tr><td style="padding:4px 0;color:#6b7280">Rekomendasi</td><td style="padding:4px 0;text-align:right">${bwdLevel.dosis}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">Status</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeCondition.label}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">Level</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeBwd.level} — ${safeBwd.condition}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">Status N</td><td style="padding:4px 0;text-align:right">${safeBwd.nitrogenStatus}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">Rekomendasi</td><td style="padding:4px 0;text-align:right">${safeBwd.dosis}</td></tr>
       </table>
     </div>
 
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
       <h2 style="margin:0 0 12px;font-size:16px;color:#374151">🔬 Indeks Spektral Terkini</h2>
       <table style="width:100%;font-size:14px">
-        <tr><td style="padding:4px 0;color:#6b7280">NDVI</td><td style="padding:4px 0;font-weight:bold;text-align:right">${indices.ndvi.toFixed(4)}</td></tr>
-        <tr><td style="padding:4px 0;color:#6b7280">NDRE</td><td style="padding:4px 0;font-weight:bold;text-align:right">${indices.ndre.toFixed(4)}</td></tr>
-        <tr><td style="padding:4px 0;color:#6b7280">GNDVI</td><td style="padding:4px 0;font-weight:bold;text-align:right">${indices.gndvi.toFixed(4)}</td></tr>
-        <tr><td style="padding:4px 0;color:#6b7280">Water Index</td><td style="padding:4px 0;font-weight:bold;text-align:right">${indices.waterIndex.toFixed(4)}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">NDVI</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeIndices.ndvi.toFixed(4)}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">NDRE</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeIndices.ndre.toFixed(4)}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">GNDVI</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeIndices.gndvi.toFixed(4)}</td></tr>
+        <tr><td style="padding:4px 0;color:#6b7280">Water Index</td><td style="padding:4px 0;font-weight:bold;text-align:right">${safeIndices.waterIndex.toFixed(4)}</td></tr>
       </table>
     </div>
 
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
       <h2 style="margin:0 0 4px;font-size:16px;color:#374151">💡 Rekomendasi</h2>
-      <p style="margin:0;font-size:14px;color:#4b5563">${bwdLevel.rekomendasi}</p>
+      <p style="margin:0;font-size:14px;color:#4b5563">${safeBwd.rekomendasi}</p>
     </div>
 
     <div style="background:white;border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb">
